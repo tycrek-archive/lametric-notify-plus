@@ -12,10 +12,9 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Switch;
+import android.widget.EditText;
 import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -40,11 +39,24 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
         recyclerView.setAdapter(appAdapter);
 
-        Button settingsButton = (Button) findViewById(R.id.settingsButton);
-        settingsButton.setOnClickListener(new View.OnClickListener() {
+        EditText txtAddress = (EditText) findViewById(R.id.textAddress);
+        EditText txtApi = (EditText) findViewById(R.id.textApi);
+        txtAddress.setText(settings.getString("address", "IP Address"));
+        txtApi.setText(settings.getString("api", "Device API Key"));
+
+        Button saveButton = (Button) findViewById(R.id.saveButton);
+        saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Apple", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), "Apple", Toast.LENGTH_SHORT).show();
+                EditText txtAddress = (EditText) findViewById(R.id.textAddress);
+                EditText txtApi = (EditText) findViewById(R.id.textApi);
+
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putString("address", txtAddress.getText().toString());
+                editor.putString("api", txtApi.getText().toString());
+                editor.commit();
+
             }
         });
     }
