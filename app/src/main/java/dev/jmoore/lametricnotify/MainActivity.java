@@ -15,6 +15,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import org.json.JSONException;
+
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -57,6 +59,13 @@ public class MainActivity extends AppCompatActivity {
                 editor.putString("api", txtApi.getText().toString());
                 editor.commit();
 
+                Lametric lametric = new Lametric(getBaseContext(), txtAddress.getText().toString(), txtApi.getText().toString());
+                try {
+                    int icon = 11252;
+                    lametric.sendNotification(icon, "Sup!");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
