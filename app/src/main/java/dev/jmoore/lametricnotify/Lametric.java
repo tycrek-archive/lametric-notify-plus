@@ -36,7 +36,7 @@ public class Lametric extends ContextWrapper {
 
     public void sendNotification(int icon, final String text) throws JSONException {
         String url = "http://" + address + ":8080/api/v2/device/notifications";
-        //Toast.makeText(Lametric.super.getBaseContext(),url,Toast.LENGTH_LONG).show();
+        Toast.makeText(Lametric.super.getBaseContext(),text,Toast.LENGTH_LONG).show();
 
         RequestQueue queue = Volley.newRequestQueue(this);
 

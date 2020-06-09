@@ -70,6 +70,12 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.ViewHolder> {
     }
 
     @Override
+    public void onViewRecycled(ViewHolder holder) {
+        super.onViewRecycled(holder);
+        holder.appToggle.setOnCheckedChangeListener(null);
+    }
+
+    @Override
     public int getItemCount() {
         return appList.size();
     }
