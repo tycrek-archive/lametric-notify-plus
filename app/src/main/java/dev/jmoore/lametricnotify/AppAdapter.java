@@ -1,17 +1,17 @@
 package dev.jmoore.lametricnotify;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.pm.ApplicationInfo;
+import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -21,28 +21,38 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class AppAdapter extends RecyclerView.Adapter<AppAdapter.ViewHolder> {
 
-    private List<AppItem> appList = new ArrayList<AppItem>();
+    private List<AppItem> appList = new ArrayList<>();
     private SharedPreferences settings;
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        public ImageView appIcon;
         public TextView appName;
+        public TextView appPackage;
         public Switch appToggle;
 
         public ViewHolder(View view) {
             super(view);
+            appIcon = (ImageView) view.findViewById(R.id.appIcon);
             appName = (TextView) view.findViewById(R.id.appName);
             appToggle = (Switch) view.findViewById(R.id.appToggle);
+            appPackage = (TextView) view.findViewById(R.id.appPackage);
         }
     }
 
-    public AppAdapter(List<ApplicationInfo> packages) {
-        for (ApplicationInfo packageInfo : packages) {
-            String mName = packageInfo.name;
-            String mPackage = packageInfo.packageName;
-            this.appList.add(new AppItem(mName, mPackage));
+    public AppAdapter(List<AppItem> appItems, String search) {
+        if (search == null) search = "";
+        else search = search.toLowerCase();
+
+        for (AppItem appItem : appItems) {
+            Drawable mIcon = appItem.getAppIcon();
+            String mName = appItem.getAppName();
+            String mPackage = appItem.getAppPackage();
+            if ((mName != null && mName.toLowerCase().contains(search)) || (mPackage != null && mPackage.toLowerCase().contains(search)))
+                this.appList.add(appItem);
         }
     }
 
+    @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
@@ -55,22 +65,22 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         final AppItem appItem = appList.get(position);
-        holder.appName.setText(appItem.getAppPackage());
+        holder.appIcon.setImageDrawable(appItem.getAppIcon());
+        holder.appName.setText(appItem.getAppName());
+        holder.appPackage.setText(appItem.getAppPackage());
         holder.appToggle.setChecked(settings.getBoolean(appItem.getAppPackage(), false));
         holder.appToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 SharedPreferences.Editor editor = settings.edit();
                 editor.putBoolean(appItem.getAppPackage(), buttonView.isChecked());
-                editor.commit();
-
-                //Toast.makeText(buttonView.getContext(), String.valueOf(settings.getBoolean(appItem.getAppPackage(), false)), Toast.LENGTH_SHORT).show();
+                editor.apply();
             }
         });
     }
 
     @Override
-    public void onViewRecycled(ViewHolder holder) {
+    public void onViewRecycled(@NonNull ViewHolder holder) {
         super.onViewRecycled(holder);
         holder.appToggle.setOnCheckedChangeListener(null);
     }

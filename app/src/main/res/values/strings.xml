@@ -1,3 +1,21 @@
 <resources>
     <string name="app_name">LaMetric Notify+</string>
+
+    <string name="icon_instagram">3741</string>
+    <string name="icon_facebook">38032</string>
+    <string name="icon_snapchat">16517</string>
+    <string name="icon_whatsapp">38033</string>
+    <string name="icon_gmail">43</string>
+    <string name="icon_signal">38034</string>
+    <string name="icon_linkedin">38035</string>
+    <string name="icon_messenger">32844</string>
+    <string name="icon_discord">38036</string>
+    <string name="icon_reddit">38037</string>
+    <string name="icon_twitter">29632</string>
+    <string name="icon_youtube">974</string>
+    <string name="icon_twitch">35482</string>
+    <string name="icon_tiktok">35685</string>
+    <string name="icon_paypal">15188</string>
+    <string name="icon_steam">28166</string>
+    <string name="icon_github">18663</string>
 </resources>
