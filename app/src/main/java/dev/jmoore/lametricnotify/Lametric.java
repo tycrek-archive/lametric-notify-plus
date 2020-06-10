@@ -26,7 +26,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Lametric extends ContextWrapper {
-    private String address, api;
+    private final String address;
+    private final String api;
 
     public Lametric(Context base, String address, String api) {
         super(base);
@@ -34,35 +35,12 @@ public class Lametric extends ContextWrapper {
         this.api = api;
     }
 
-    public void sendNotification(String icon, String text) throws JSONException {
-        String body = "{\n" +
-                "   \"model\": {\n" +
-                "        \"frames\": [\n" +
-                "            {\n" +
-                "               \"icon\":" + icon + ",\n" +
-                "               \"text\":\"" + text + "\"\n" +
-                "            }\n" +
-                "        ]\n" +
-                "    }\n" +
-                "}";
-        sendRequest(body);
-    }
-
     public void sendNotification(String icon, String[] text) throws JSONException {
         String[] frames = new String[text.length];
-        for (int i = 0; i < text.length; i++) {
-            String frame = "{ \"icon\": " + icon + ", \"text\": \"" + text[i] + "\" }";
-            frames[i] = frame;
-        }
+        for (int i = 0; i < text.length; i++)
+            frames[i] = "{ \"icon\": " + icon + ", \"text\": \"" + text[i] + "\" }";
 
-        String body = "{\n" +
-                "   \"model\": {\n" +
-                "       \"frames\": [\n" +
-                            TextUtils.join(",", frames) +
-                "       ]\n" +
-                "   }\n" +
-                "}";
-        sendRequest(body);
+        sendRequest("{ \"model\": { \"frames\": [ " + TextUtils.join(",", frames) + " ] } }");
     }
 
     private void sendRequest(String body) throws JSONException {
@@ -73,6 +51,9 @@ public class Lametric extends ContextWrapper {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                // Set to false to toast errors for debugging
+                //noinspection ConstantConditions
+                if (true) return;
                 if (error instanceof TimeoutError || error instanceof NoConnectionError) Toast.makeText(Lametric.super.getBaseContext(),"Timeout/Connection error: " + error, Toast.LENGTH_LONG).show();
                 else if (error instanceof AuthFailureError) Toast.makeText(Lametric.super.getBaseContext(),"Authentication error: " + error, Toast.LENGTH_LONG).show();
                 else if (error instanceof ServerError) Toast.makeText(Lametric.super.getBaseContext(),"Server error: " + error, Toast.LENGTH_LONG).show();
@@ -93,20 +74,5 @@ public class Lametric extends ContextWrapper {
 
         RequestQueue queue = Volley.newRequestQueue(this);
         queue.add(request);
-    }
-
-    class LametricModel {
-        class model {
-            private LametricFrame[] frames;
-        }
-    }
-
-    class LametricFrame {
-        private int icon;
-        private String text;
-        private LametricFrame(int icon, String text) {
-            this.icon = icon;
-            this.text = text;
-        }
     }
 }

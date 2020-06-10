@@ -23,7 +23,9 @@ public class LameNotificationService extends NotificationListenerService {
     public void onNotificationPosted(StatusBarNotification sbn) {
         String notificationPackage = sbn.getPackageName();
         String nTitle = sbn.getNotification().extras.getString("android.title");
-        String nText = sbn.getNotification().extras.getString("android.text");
+
+        // Some apps (like Signal) don't return a proper String so we cannot use .getString()
+        @SuppressWarnings("ConstantConditions") String nText = sbn.getNotification().extras.get("android.text").toString();
 
         // Get the current encoded data and timestamp for duplicate prevention
         String currentContent = Base64.encodeToString((nTitle + ":" + nText).getBytes(), Base64.NO_WRAP);
@@ -35,20 +37,11 @@ public class LameNotificationService extends NotificationListenerService {
             previousContent = currentContent;
             previousTimestamp = currentTimestamp;
 
-            SharedPreferences settings = getApplicationContext().getSharedPreferences("settings", MODE_PRIVATE);
-            String address = settings.getString("address", "IP Address");
-            String api = settings.getString("api", "Device API Key");
-
             try {
+                SharedPreferences settings = getApplicationContext().getSharedPreferences("settings", MODE_PRIVATE);
                 if (settings.getBoolean(notificationPackage, false)) {
-                    String icon = getIcon(notificationPackage);
-                    Lametric lametric = new Lametric(getApplicationContext(), address, api);
-
-                    if (nText == null) {
-                        lametric.sendNotification(icon, nTitle);
-                    } else {
-                        lametric.sendNotification(icon, new String[]{nTitle, nText});
-                    }
+                    Lametric lametric = new Lametric(getApplicationContext(), settings.getString("address", "0.0.0.0"), settings.getString("api", "api_key"));
+                    lametric.sendNotification(getIcon(notificationPackage), new String[]{nTitle, nText});
                 }
             } catch(Exception ex) {
                 ex.printStackTrace();
