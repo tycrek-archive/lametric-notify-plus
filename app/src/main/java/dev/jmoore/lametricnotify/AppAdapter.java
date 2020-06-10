@@ -1,7 +1,6 @@
 package dev.jmoore.lametricnotify;
 
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,14 +19,14 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class AppAdapter extends RecyclerView.Adapter<AppAdapter.ViewHolder> {
 
-    private List<AppItem> appList = new ArrayList<>();
+    private final List<AppItem> appList = new ArrayList<>();
     private SharedPreferences settings;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public ImageView appIcon;
-        public TextView appName;
-        public TextView appPackage;
-        public Switch appToggle;
+        public final ImageView appIcon;
+        public final TextView appName;
+        public final TextView appPackage;
+        public final Switch appToggle;
 
         public ViewHolder(View view) {
             super(view);
@@ -43,7 +42,6 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.ViewHolder> {
         else search = search.toLowerCase();
 
         for (AppItem appItem : appItems) {
-            Drawable mIcon = appItem.getAppIcon();
             String mName = appItem.getAppName();
             String mPackage = appItem.getAppPackage();
             if ((mName != null && mName.toLowerCase().contains(search)) || (mPackage != null && mPackage.toLowerCase().contains(search)))
@@ -54,10 +52,8 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.ViewHolder> {
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.app_item_row, parent, false);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.app_item_row, parent, false);
         this.settings = parent.getContext().getSharedPreferences("settings", MODE_PRIVATE);
-
         return new ViewHolder(itemView);
     }
 

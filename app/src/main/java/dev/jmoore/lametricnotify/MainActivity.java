@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences settings;
 
     // List of apps to pass to initializeView so we don't freeze the device with every search
-    private List<AppItem> appList = new ArrayList<>();
+    private final List<AppItem> appList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
         helpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showHelp(v);
+                showHelp();
             }
         });
 
@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(new AppAdapter(appList, search));
     }
 
-    private void showHelp(View v) {
+    private void showHelp() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setCancelable(true);
         builder.setTitle("Help");
