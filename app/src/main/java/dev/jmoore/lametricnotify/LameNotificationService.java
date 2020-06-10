@@ -43,7 +43,12 @@ public class LameNotificationService extends NotificationListenerService {
                 if (settings.getBoolean(notificationPackage, false)) {
                     String icon = getIcon(notificationPackage);
                     Lametric lametric = new Lametric(getApplicationContext(), address, api);
-                    lametric.sendNotification(icon, nText == null ? nTitle : nText);
+
+                    if (nText == null) {
+                        lametric.sendNotification(icon, nTitle);
+                    } else {
+                        lametric.sendNotification(icon, new String[]{nTitle, nText});
+                    }
                 }
             } catch(Exception ex) {
                 ex.printStackTrace();

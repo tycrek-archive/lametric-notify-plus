@@ -2,8 +2,8 @@ package dev.jmoore.lametricnotify;
 
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.text.TextUtils;
 import android.util.Base64;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -34,8 +34,7 @@ public class Lametric extends ContextWrapper {
         this.api = api;
     }
 
-    public void sendNotification(String icon, final String text) throws JSONException {
-        String url = "http://" + address + ":8080/api/v2/device/notifications";
+    public void sendNotification(String icon, String text) throws JSONException {
         String body = "{\n" +
                 "   \"model\": {\n" +
                 "        \"frames\": [\n" +
@@ -46,7 +45,28 @@ public class Lametric extends ContextWrapper {
                 "        ]\n" +
                 "    }\n" +
                 "}";
+        sendRequest(body);
+    }
 
+    public void sendNotification(String icon, String[] text) throws JSONException {
+        String[] frames = new String[text.length];
+        for (int i = 0; i < text.length; i++) {
+            String frame = "{ \"icon\": " + icon + ", \"text\": \"" + text[i] + "\" }";
+            frames[i] = frame;
+        }
+
+        String body = "{\n" +
+                "   \"model\": {\n" +
+                "       \"frames\": [\n" +
+                            TextUtils.join(",", frames) +
+                "       ]\n" +
+                "   }\n" +
+                "}";
+        sendRequest(body);
+    }
+
+    private void sendRequest(String body) throws JSONException {
+        String url = "http://" + address + ":8080/api/v2/device/notifications";
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(body), new Response.Listener() {
             @Override
             public void onResponse(Object response) {}
@@ -73,5 +93,20 @@ public class Lametric extends ContextWrapper {
 
         RequestQueue queue = Volley.newRequestQueue(this);
         queue.add(request);
+    }
+
+    class LametricModel {
+        class model {
+            private LametricFrame[] frames;
+        }
+    }
+
+    class LametricFrame {
+        private int icon;
+        private String text;
+        private LametricFrame(int icon, String text) {
+            this.icon = icon;
+            this.text = text;
+        }
     }
 }
