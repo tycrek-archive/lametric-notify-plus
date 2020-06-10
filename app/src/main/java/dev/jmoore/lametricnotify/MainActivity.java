@@ -12,7 +12,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
@@ -131,6 +130,7 @@ public class MainActivity extends AppCompatActivity {
                 "5. Make sure you allow Notification Access in Settings > Apps > Special Access > Notification Access\n\n" +
                 "\n" +
                 "Have a suggestion or question? Feel free to visit the GitHub page and open an Issue or Pull Request!");
+
         builder.setNeutralButton("GitHub", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -138,11 +138,13 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(browserIntent);
             }
         });
+
         builder.setPositiveButton("Close", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {}
         });
 
+        // Display Help dialog
         AlertDialog dialog = builder.create();
         dialog.show();
     }

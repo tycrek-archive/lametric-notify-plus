@@ -5,8 +5,15 @@ import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
+import android.util.Base64;
 
 public class LameNotificationService extends NotificationListenerService {
+
+    // For preventing duplicate events
+    private static final int DUPLICATE_THRESHOLD = 1000;
+    private String previousContent;
+    private Long previousTimestamp;
+
     @Override
     public IBinder onBind(Intent intent) {
         return super.onBind(intent);
@@ -15,22 +22,32 @@ public class LameNotificationService extends NotificationListenerService {
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
         String notificationPackage = sbn.getPackageName();
+        String nTitle = sbn.getNotification().extras.getString("android.title");
+        String nText = sbn.getNotification().extras.getString("android.text");
 
-        SharedPreferences settings = getApplicationContext().getSharedPreferences("settings", MODE_PRIVATE);
-        String address = settings.getString("address", "IP Address");
-        String api = settings.getString("api", "Device API Key");
+        // Get the current encoded data and timestamp for duplicate prevention
+        String currentContent = Base64.encodeToString((nTitle + ":" + nText).getBytes(), Base64.NO_WRAP);
+        Long currentTimestamp = sbn.getPostTime();
 
-        try {
-            if (settings.getBoolean(notificationPackage, false)) {
-                String icon = getIcon(notificationPackage);
+        // 1. If both are null, they haven't been set (this is the first notification the service gets after starting)
+        // 2. New content and Timestamps have a difference of at least 1000 milliseconds
+        if ((previousContent == null || previousTimestamp == null) || (!currentContent.equals(previousContent) && (currentTimestamp - previousTimestamp > DUPLICATE_THRESHOLD))) {
+            previousContent = currentContent;
+            previousTimestamp = currentTimestamp;
 
-                String nTitle = sbn.getNotification().extras.getString("android.title");
-                String nText = sbn.getNotification().extras.getString("android.text");
-                Lametric lametric = new Lametric(getApplicationContext(), address, api);
-                lametric.sendNotification(icon, nText == null ? nTitle : nText);
+            SharedPreferences settings = getApplicationContext().getSharedPreferences("settings", MODE_PRIVATE);
+            String address = settings.getString("address", "IP Address");
+            String api = settings.getString("api", "Device API Key");
+
+            try {
+                if (settings.getBoolean(notificationPackage, false)) {
+                    String icon = getIcon(notificationPackage);
+                    Lametric lametric = new Lametric(getApplicationContext(), address, api);
+                    lametric.sendNotification(icon, nText == null ? nTitle : nText);
+                }
+            } catch(Exception ex) {
+                ex.printStackTrace();
             }
-        } catch(Exception ex) {
-            ex.printStackTrace();
         }
     }
 
