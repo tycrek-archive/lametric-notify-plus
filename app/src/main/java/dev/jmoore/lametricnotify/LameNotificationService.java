@@ -1,7 +1,11 @@
 package dev.jmoore.lametricnotify;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.wifi.SupplicantState;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.IBinder;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
@@ -21,11 +25,23 @@ public class LameNotificationService extends NotificationListenerService {
 
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
+        // Get information about the notification. n in nFoo is "notification"
         String notificationPackage = sbn.getPackageName();
-        String nTitle = sbn.getNotification().extras.getString("android.title");
+        String nTitle = sbn.getNotification().extras.getString(MainActivity.NOTIFICATION_EXTRA_TITLE);
+        String nText = MainActivity.STRING_EMPTY;
 
-        // Some apps (like Signal) don't return a proper String so we cannot use .getString()
-        @SuppressWarnings("ConstantConditions") String nText = sbn.getNotification().extras.get("android.text").toString();
+        // LaMetric uses "frames" to show multiple slides of data
+        String[] nFrames;
+
+        // Wrap in a try/catch as some notifications don't properly use android.text
+        try {
+            // Some apps (like Signal) don't return a proper String so we cannot use .getString()
+            //noinspection ConstantConditions
+            nText = sbn.getNotification().extras.get(MainActivity.NOTIFICATION_EXTRA_TEXT).toString();
+            nFrames = new String[]{nTitle, nText};
+        } catch (NullPointerException ex) {
+            nFrames = new String[]{nTitle};
+        }
 
         // Get the current encoded data and timestamp for duplicate prevention
         String currentContent = Base64.encodeToString((nTitle + ":" + nText).getBytes(), Base64.NO_WRAP);
@@ -38,19 +54,22 @@ public class LameNotificationService extends NotificationListenerService {
             previousTimestamp = currentTimestamp;
 
             try {
-                SharedPreferences settings = getApplicationContext().getSharedPreferences("settings", MODE_PRIVATE);
-                if (settings.getBoolean(notificationPackage, false)) {
-                    Lametric lametric = new Lametric(getApplicationContext(), settings.getString("address", "0.0.0.0"), settings.getString("api", "api_key"));
-                    lametric.sendNotification(getIcon(notificationPackage), new String[]{nTitle, nText});
+                SharedPreferences settings = getApplicationContext().getSharedPreferences(MainActivity.SHARED_PREFERENCES_NAME, MODE_PRIVATE);
+                if (settings.getBoolean(notificationPackage, false) && getSsid().equals(settings.getString(MainActivity.SHARED_PREFERENCES_KEY_SSID, MainActivity.STRING_EMPTY))) {
+                    Lametric lametric = new Lametric(getApplicationContext(),
+                            settings.getString(MainActivity.SHARED_PREFERENCES_KEY_ADDRESS, MainActivity.SHARED_PREFERENCES_DEFAULT_ADDRESS),
+                            settings.getString(MainActivity.SHARED_PREFERENCES_KEY_API, MainActivity.SHARED_PREFERENCES_DEFAULT_API));
+                    lametric.sendNotification(getIcon(notificationPackage), nFrames);
                 }
-            } catch(Exception ex) {
+            } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
     }
 
     @Override
-    public void onNotificationRemoved(StatusBarNotification sbn) {}
+    public void onNotificationRemoved(StatusBarNotification sbn) {
+    }
 
     private String getIcon(String app) {
         String defIcon = "38031";
@@ -93,5 +112,13 @@ public class LameNotificationService extends NotificationListenerService {
             default:
                 return defIcon;
         }
+    }
+
+    private String getSsid() {
+        WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+        WifiInfo wifiInfo;
+        wifiInfo = wifiManager.getConnectionInfo();
+
+        return wifiInfo.getSupplicantState() == SupplicantState.COMPLETED ? wifiInfo.getSSID() : MainActivity.STRING_EMPTY;
     }
 }

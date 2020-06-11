@@ -38,9 +38,10 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.ViewHolder> {
     }
 
     public AppAdapter(List<AppItem> appItems, String search) {
-        if (search == null) search = "";
+        if (search == null) search = MainActivity.STRING_EMPTY;
         else search = search.toLowerCase();
 
+        // Only include items that match our search term
         for (AppItem appItem : appItems) {
             String mName = appItem.getAppName();
             String mPackage = appItem.getAppPackage();
@@ -53,7 +54,7 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.ViewHolder> {
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.app_item_row, parent, false);
-        this.settings = parent.getContext().getSharedPreferences("settings", MODE_PRIVATE);
+        this.settings = parent.getContext().getSharedPreferences(MainActivity.SHARED_PREFERENCES_NAME, MODE_PRIVATE);
         return new ViewHolder(itemView);
     }
 

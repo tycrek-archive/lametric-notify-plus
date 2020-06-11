@@ -36,38 +36,49 @@ public class Lametric extends ContextWrapper {
     }
 
     public void sendNotification(String icon, String[] text) throws JSONException {
+        // Build the frames for the notification
         String[] frames = new String[text.length];
         for (int i = 0; i < text.length; i++)
-            frames[i] = "{ \"icon\": " + icon + ", \"text\": \"" + text[i] + "\" }";
+            frames[i] = String.format(MainActivity.LAMETRIC_FRAMES, icon, text[i]);
 
-        sendRequest("{ \"model\": { \"frames\": [ " + TextUtils.join(",", frames) + " ] } }");
+        // Send the HTTP POST request
+        sendRequest(String.format(MainActivity.LAMETRIC_MODEL, TextUtils.join(",", frames)));
     }
 
     private void sendRequest(String body) throws JSONException {
-        String url = "http://" + address + ":8080/api/v2/device/notifications";
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(body), new Response.Listener() {
+        String url = String.format(MainActivity.LAMETRIC_URL, address);
+
+        // Build the request
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(body), new Response.Listener<JSONObject>() {
             @Override
-            public void onResponse(Object response) {}
+            public void onResponse(JSONObject response) {
+            }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 // Set to false to toast errors for debugging
                 //noinspection ConstantConditions
                 if (true) return;
-                if (error instanceof TimeoutError || error instanceof NoConnectionError) Toast.makeText(Lametric.super.getBaseContext(),"Timeout/Connection error: " + error, Toast.LENGTH_LONG).show();
-                else if (error instanceof AuthFailureError) Toast.makeText(Lametric.super.getBaseContext(),"Authentication error: " + error, Toast.LENGTH_LONG).show();
-                else if (error instanceof ServerError) Toast.makeText(Lametric.super.getBaseContext(),"Server error: " + error, Toast.LENGTH_LONG).show();
-                else if (error instanceof NetworkError) Toast.makeText(Lametric.super.getBaseContext(),"Network error: " + error, Toast.LENGTH_LONG).show();
-                else if (error instanceof ParseError) Toast.makeText(Lametric.super.getBaseContext(),"Parse error: " + error, Toast.LENGTH_LONG).show();
-                else Toast.makeText(Lametric.super.getBaseContext(),"Unknown error: " + error, Toast.LENGTH_LONG).show();
+                if (error instanceof TimeoutError || error instanceof NoConnectionError)
+                    Toast.makeText(Lametric.super.getBaseContext(), "Timeout/Connection error: " + error, Toast.LENGTH_LONG).show();
+                else if (error instanceof AuthFailureError)
+                    Toast.makeText(Lametric.super.getBaseContext(), "Authentication error: " + error, Toast.LENGTH_LONG).show();
+                else if (error instanceof ServerError)
+                    Toast.makeText(Lametric.super.getBaseContext(), "Server error: " + error, Toast.LENGTH_LONG).show();
+                else if (error instanceof NetworkError)
+                    Toast.makeText(Lametric.super.getBaseContext(), "Network error: " + error, Toast.LENGTH_LONG).show();
+                else if (error instanceof ParseError)
+                    Toast.makeText(Lametric.super.getBaseContext(), "Parse error: " + error, Toast.LENGTH_LONG).show();
+                else
+                    Toast.makeText(Lametric.super.getBaseContext(), "Unknown error: " + error, Toast.LENGTH_LONG).show();
             }
         }) {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Basic " + Base64.encodeToString(("dev:" + api).getBytes(), Base64.NO_WRAP));
-                headers.put("Content-Type", "application/json");
-                headers.put("Accept", "application/json");
+                headers.put(MainActivity.HEADER_KEY_AUTH, String.format(MainActivity.HEADER_AUTH, Base64.encodeToString(("dev:" + api).getBytes(), Base64.NO_WRAP)));
+                headers.put(MainActivity.HEADER_KEY_CONTENT_TYPE, MainActivity.HEADER_JSON);
+                headers.put(MainActivity.HEADER_KEY_ACCEPT, MainActivity.HEADER_JSON);
                 return headers;
             }
         };

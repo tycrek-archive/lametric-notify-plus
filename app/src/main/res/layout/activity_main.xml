@@ -13,7 +13,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="8dp"
         android:background="@drawable/rounded_button"
-        android:text="Save"
+        android:text="@string/button_text_save"
         android:textColor="@color/colorTextCustom"
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/helpButton"
@@ -46,14 +46,14 @@
         android:digits="0123456789."
         android:ems="10"
         android:fontFamily="monospace"
-        android:hint="IP Address"
+        android:hint="@string/edittext_hint_address"
+        android:importantForAutofill="no"
         android:inputType="number"
         android:selectAllOnFocus="true"
         android:singleLine="true"
         app:layout_constraintBottom_toTopOf="@+id/textApi"
         app:layout_constraintEnd_toStartOf="@+id/saveButton"
-        app:layout_constraintStart_toStartOf="parent"
-        android:importantForAutofill="no" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <EditText
         android:id="@+id/textApi"
@@ -64,14 +64,14 @@
         android:layout_marginBottom="8dp"
         android:ems="10"
         android:fontFamily="monospace"
-        android:hint="Device API Key"
+        android:hint="@string/edittext_hint_api_key"
+        android:importantForAutofill="no"
         android:inputType="textLongMessage"
         android:selectAllOnFocus="true"
         android:singleLine="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/helpButton"
-        app:layout_constraintStart_toStartOf="parent"
-        android:importantForAutofill="no" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <EditText
         android:id="@+id/textSearch"
@@ -82,14 +82,14 @@
         android:layout_marginEnd="8dp"
         android:ems="10"
         android:fontFamily="sans-serif"
-        android:hint="Search"
+        android:hint="@string/edittext_hint_search"
+        android:importantForAutofill="no"
         android:inputType="textShortMessage"
         android:selectAllOnFocus="true"
         android:singleLine="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:importantForAutofill="no" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/helpButton"
@@ -98,7 +98,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="8dp"
         android:background="@drawable/rounded_button"
-        android:text="Help"
+        android:text="@string/button_text_help"
         android:textColor="@color/colorTextCustom"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"

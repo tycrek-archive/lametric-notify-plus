@@ -13,14 +13,13 @@
         android:layout_toEndOf="@id/appIcon"
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
-        android:text="TextView"
         android:textSize="18sp" />
 
     <Switch
         android:id="@+id/appToggle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_centerVertical="true" />
 
     <ImageView
@@ -28,8 +27,8 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_centerVertical="true"
-        app:srcCompat="@android:drawable/ic_menu_report_image"
-        android:contentDescription="App Icon" />
+        android:contentDescription="@string/description_app_icon"
+        app:srcCompat="@android:drawable/ic_menu_report_image" />
 
     <TextView
         android:id="@+id/appPackage"
@@ -41,9 +40,8 @@
         android:layout_toEndOf="@id/appIcon"
         android:fontFamily="monospace"
         android:paddingStart="10dp"
-        android:paddingEnd="10dp"
-        android:text="TextView"
         android:paddingTop="4dp"
+        android:paddingEnd="10dp"
         android:textSize="12sp" />
 
 </RelativeLayout>

@@ -1,6 +1,15 @@
 <resources>
     <string name="app_name">LaMetric Notify+</string>
 
+    <string name="description_app_icon">App Icon</string>
+
+    <string name="button_text_save">Save</string>
+    <string name="button_text_help">Help</string>
+
+    <string name="edittext_hint_search">Search</string>
+    <string name="edittext_hint_address">IP Address</string>
+    <string name="edittext_hint_api_key">Device API Key</string>
+
     <string name="icon_instagram">3741</string>
     <string name="icon_facebook">38032</string>
     <string name="icon_snapchat">16517</string>
