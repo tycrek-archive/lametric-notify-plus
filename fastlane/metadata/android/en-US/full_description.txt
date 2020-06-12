@@ -1,0 +1,16 @@
+Features:
+
+- Forward notifications from any app on your device; no more overly-vague "Other" category!
+- Search bar to quickly locate apps
+- Alphabetical sorting to prevent headaches
+- Small size: the APK file is less than two megabytes
+- Dark mode (Requires Android 10)
+
+How to use:
+1. Select apps to forward notifications from. No need to tap Save as toggling the switches automatically saves them.
+2. Enter the IP address and API key for your LaMetric device and tap Save.
+3. Make sure you're on the same network as your LaMetric. You should start receiving notifications from the app.
+
+Homepage: https://github.com/tycrek/lametric-notify-plus/
+
+DISCLAIMER: This is an UNOFFICIAL app. "LaMetric" and "LaMetric Time" are trademarks of Smart Atoms Limited.
