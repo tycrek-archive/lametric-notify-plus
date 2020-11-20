@@ -47,8 +47,10 @@ public class MainActivity extends AppCompatActivity {
     public static final String DIALOG_TITLE_HELP = "Help";
 
     public static final String DIALOG_MESSAGE_NOTIFICATIONS = "The app needs permission to view your notifications in order to send them to your LaMetric Time.";
-    public static final String DIALOG_MESSAGE_LOCATION = "The app needs location permission to get your WiFi network name. This is used to make sure notifications are only sent when you are on the same network as your LaMetric device.\n\nIf you do not want to provide Location, you may also manually set the WiFi SSID.";
-    public static final String DIALOG_MESSAGE_CONFIRM_NETWORK_NAME = "Please confirm that %s is your network name.";
+    public static final String DIALOG_MESSAGE_LOCATION =
+            "This app requires access to the Background Location permission to get your WiFi network name while the app is closed. This is to ensure notifications are only sent when you are on the same network as your LaMetric device.\n\n" +
+            "If you choose to deny restrictions, understand that the app may be unable to forward notifications while in the background.";
+    public static final String DIALOG_MESSAGE_CONFIRM_NETWORK_NAME = "Please confirm that \"%s\" is your network name.";
     public static final String DIALOG_MESSAGE_HELP = "1. The app will only work when connected to the same WiFi network as your LaMetric Time.\n\n" +
             "2. Enter the IP address of your LaMetric Time. This can be found in the LaMetric app: select your device > gear icon > Connectivity\n\n" +
             "3. The API key is the LOCAL API key for your device. This can be obtained at (sign in with your developer account): https://developer.lametric.com/user/devices\n\n" +
@@ -379,12 +381,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         // Confirm the SSID or ask for a custom SSID
-        if (requestCode == MY_PERMISSIONS_REQUEST_LOCATION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                confirmSsid(false, STRING_EMPTY);
-            } else {
-                getSsidFromUser();
-            }
-        }
+        if (requestCode == MY_PERMISSIONS_REQUEST_LOCATION && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+            confirmSsid(false, STRING_EMPTY);
     }
 }
